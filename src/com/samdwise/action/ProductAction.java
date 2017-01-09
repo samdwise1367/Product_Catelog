@@ -105,6 +105,38 @@ public class ProductAction {
     }
     
     
+    public void updateProduct(ProductTO productTo) throws SQLException{
+        String sql = null;
+        PreparedStatement preparedStmt = null;
+        Connection con = connect.getConnecion();
+        
+        sql = "UPDATE products SET name = ?, price = ?, add_date=? WHERE id = ?";
+        preparedStmt = con.prepareStatement(sql);
+        preparedStmt.setString(1, productTo.getName());
+        preparedStmt.setFloat(2, productTo.getPrice());
+        preparedStmt.setString(3, productTo.getAddDate());
+        preparedStmt.setInt(4, productTo.getId());
+        
+        preparedStmt.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Record Updated");
+        
+        
+    
+    }
+    
+    public void deleteProduct(ProductTO productTo) throws SQLException{
+        String sql = null;
+        PreparedStatement preparedStmt = null;
+        Connection con = connect.getConnecion();
+        
+        sql = "DELETE FROM products WHERE id = ?";
+        preparedStmt = con.prepareStatement(sql);
+        preparedStmt.setInt(1, productTo.getId());
+        preparedStmt.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Record Deleted!");
+    
+    }
+    
     public ArrayList<ProductTO> getTableData(){
         ArrayList<ProductTO> listProduct = new ArrayList<ProductTO>();
         Connection con = connect.getConnecion();

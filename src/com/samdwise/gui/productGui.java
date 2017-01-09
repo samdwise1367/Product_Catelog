@@ -12,9 +12,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -32,6 +37,7 @@ public class productGui extends javax.swing.JFrame {
     ConnectionClass getClass = new ConnectionClass();
     ProductAction productAction = new ProductAction();
     File path;
+    ArrayList<ProductTO> listArray;
     
     
     public productGui() {
@@ -63,8 +69,8 @@ public class productGui extends javax.swing.JFrame {
         jLabelImage = new javax.swing.JLabel();
         jButtonUploadImage = new javax.swing.JButton();
         jButtonInsert = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        jButtonUpdate = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
@@ -110,7 +116,7 @@ public class productGui extends javax.swing.JFrame {
             }
         });
 
-        dateChooserDateAdd.setCurrentView(new datechooser.view.appearance.AppearancesList("Swing",
+        dateChooserDateAdd.setCurrentView(new datechooser.view.appearance.AppearancesList("Bordered",
             new datechooser.view.appearance.ViewAppearance("custom",
                 new datechooser.view.appearance.swing.SwingCellAppearance(new java.awt.Font("Tahoma", java.awt.Font.PLAIN, 13),
                     new java.awt.Color(0, 0, 0),
@@ -153,6 +159,12 @@ public class productGui extends javax.swing.JFrame {
                 true)));
     dateChooserDateAdd.setAutoScroll(false);
     dateChooserDateAdd.setFormat(2);
+    try {
+        dateChooserDateAdd.setDefaultPeriods(new datechooser.model.multiple.PeriodSet(new datechooser.model.multiple.Period(new java.util.GregorianCalendar(2017, 0, 8),
+            new java.util.GregorianCalendar(2017, 0, 8))));
+} catch (datechooser.model.exeptions.IncompatibleDataExeption e1) {
+    e1.printStackTrace();
+    }
     dateChooserDateAdd.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
 
     jLabelImage.setOpaque(true);
@@ -177,20 +189,25 @@ public class productGui extends javax.swing.JFrame {
         }
     });
 
-    jButton2.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-    jButton2.setForeground(java.awt.Color.blue);
-    jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/samdwise/icons/update.png"))); // NOI18N
-    jButton2.setText("Update");
-    jButton2.addActionListener(new java.awt.event.ActionListener() {
+    jButtonUpdate.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+    jButtonUpdate.setForeground(java.awt.Color.blue);
+    jButtonUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/samdwise/icons/update.png"))); // NOI18N
+    jButtonUpdate.setText("Update");
+    jButtonUpdate.addActionListener(new java.awt.event.ActionListener() {
         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            jButton2ActionPerformed(evt);
+            jButtonUpdateActionPerformed(evt);
         }
     });
 
-    jButton3.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-    jButton3.setForeground(java.awt.Color.blue);
-    jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/samdwise/icons/Actions-edit-delete-icon.png"))); // NOI18N
-    jButton3.setText("Delete");
+    jButtonDelete.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+    jButtonDelete.setForeground(java.awt.Color.blue);
+    jButtonDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/samdwise/icons/Actions-edit-delete-icon.png"))); // NOI18N
+    jButtonDelete.setText("Delete");
+    jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            jButtonDeleteActionPerformed(evt);
+        }
+    });
 
     javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
     jPanel1.setLayout(jPanel1Layout);
@@ -207,9 +224,9 @@ public class productGui extends javax.swing.JFrame {
                         .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
                     .addGap(48, 48, 48)
-                    .addComponent(jButton2)
+                    .addComponent(jButtonUpdate)
                     .addGap(31, 31, 31)
-                    .addComponent(jButton3)
+                    .addComponent(jButtonDelete)
                     .addContainerGap())
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addComponent(jButtonInsert, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -247,18 +264,18 @@ public class productGui extends javax.swing.JFrame {
             .addGap(24, 24, 24)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(dateChooserDateAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
+                .addComponent(dateChooserDateAdd, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
             .addGap(32, 32, 32)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jLabel5)
                 .addComponent(jLabelImage, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jButtonUploadImage, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+            .addComponent(jButtonUploadImage, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
             .addGap(18, 18, 18)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jButtonInsert, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButtonUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButtonDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGap(31, 31, 31))
     );
 
@@ -270,6 +287,11 @@ public class productGui extends javax.swing.JFrame {
             "ID", "Name", "Price", "Date Added"
         }
     ));
+    jTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            jTableMouseClicked(evt);
+        }
+    });
     jScrollPane1.setViewportView(jTable);
 
     jPanel2.setBackground(java.awt.Color.white);
@@ -390,26 +412,82 @@ public class productGui extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButtonUploadImageActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButtonUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        if(!jTextFieldId.getText().isEmpty()){
+            float price = Float.parseFloat(jTextFieldPrice.getText());
+            ProductTO productTo = new ProductTO(Integer.parseInt(jTextFieldId.getText()),jTextFieldName.getText(),price,dateChooserDateAdd.getText(),null);
+            try {
+                productAction.updateProduct(productTo);
+                fillTable();
+             }  catch (SQLException ex) {
+            Logger.getLogger(productGui.class.getName()).log(Level.SEVERE, null, ex);
+         }
+        }
+    }//GEN-LAST:event_jButtonUpdateActionPerformed
+
+    private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
+
+            // TODO add your handling code here:
+            
+            int count = jTable.getSelectedRow(); // getting the index of the selected roow
+            
+            //getting the record in the arraylist of index count
+            int id = listArray.get(count).getId();
+            jTextFieldId.setText(Integer.toString(id));
+            
+            String name = listArray.get(count).getName();
+            jTextFieldName.setText(name);
+            
+            float price = listArray.get(count).getPrice();
+            jTextFieldPrice.setText(Float.toString(price));
+                        
+            String c = listArray.get(count).getAddDate();
+            
+            dateChooserDateAdd.setText(c);
+            byte [] getImage = listArray.get(count).getImage();
+            
+            jLabelImage.setIcon(productAction.ResizeImage(null, getImage, jLabelImage.getWidth(), jLabelImage.getHeight()));
+       
+        
+        
+    }//GEN-LAST:event_jTableMouseClicked
+
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+        // TODO add your handling code here:
+        if(!jTextFieldId.getText().isEmpty()){
+            float price = Float.parseFloat(jTextFieldPrice.getText());
+            ProductTO productTo = new ProductTO(Integer.parseInt(jTextFieldId.getText()),jTextFieldName.getText(),price,dateChooserDateAdd.getText(),null);
+            
+            try {
+                productAction.deleteProduct(productTo);
+                fillTable();
+            } catch (SQLException ex) {
+                Logger.getLogger(productGui.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
 
     
     public void fillTable(){
         DefaultTableModel md = (DefaultTableModel) jTable.getModel();
         md.setRowCount(0); // to clear table content
-        ArrayList<ProductTO> ls = productAction.getTableData();
+        listArray = productAction.getTableData();
         Object[] rw = new Object[4];
-        for(int i = 0; i<ls.size(); i++){
-            rw[0] = ls.get(i).getId();
-            rw[1] = ls.get(i).getName();
-            rw[2] = ls.get(i).getPrice();
-            rw[3] = ls.get(i).getAddDate();
+        for(int i = 0; i<listArray.size(); i++){
+            rw[0] = listArray.get(i).getId();
+            rw[1] = listArray.get(i).getName();
+            rw[2] = listArray.get(i).getPrice();
+            rw[3] = listArray.get(i).getAddDate();
             
             md.addRow(rw);
+            
+            
         }
              
     }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -447,13 +525,13 @@ public class productGui extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private datechooser.beans.DateChooserCombo dateChooserDateAdd;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonInsert;
+    private javax.swing.JButton jButtonUpdate;
     private javax.swing.JButton jButtonUploadImage;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
